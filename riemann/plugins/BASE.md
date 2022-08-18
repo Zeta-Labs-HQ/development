@@ -40,14 +40,13 @@ And, then assuming there's the riemann app initialized, you can load a plugin as
 ```py
 from plugins import MyPlugin
 
-app.load_plugin(MyPlugin, "hello-world")
+app.load_plugin(MyPlugin("name"), "hello-world")
 ```
 
-You an enable and disable a plugin dynamically (comes with side-effects due to app-hooking):
+You can enable and disable a plugin dynamically (comes with side-effects due to app-hooking):
 
 ```py
 app.enable_plugin("hello-world")  # This adds the `.name` property.
 
 app.disable_plugin("hello-world")  # This removes the `.name` property.
 ```
-
