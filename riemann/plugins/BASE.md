@@ -14,7 +14,7 @@ There would be an abstract class with the API in order to ensure the functions a
 consistent.
 
 ```py
-from riemann.plugins import PluginBase
+from riemann.plugins import PluginBase, PluginException
 
 class MyPlugin(PluginBase):
     def __init__(self, name: str, *args, **kwargs):
@@ -31,7 +31,7 @@ class MyPlugin(PluginBase):
 
     # Error handler hook. All the errors caused in app propagated here.
     # Figure out how to to pass all errors for the specific app here?
-    def on_error(self, error: Exception):
+    def on_error(self, error: PluginException):
         self.logger.error(error)
 ```
 
