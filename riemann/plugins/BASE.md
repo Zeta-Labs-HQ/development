@@ -14,24 +14,30 @@ There would be an abstract class with the API in order to ensure the functions a
 consistent.
 
 ```py
-from riemann.plugins import PluginBase, PluginException
+from riemann.plugins import PluginBase, PluginException, PluginSettings
 
 class MyPlugin(PluginBase):
-    def __init__(self, name: str, *args, **kwargs):
+    def __init__(self, name: str, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
 
-        # Hook an instance to the app.
-        self.app.name = name
+        # Hook to the `name` property in app state (the bot)
+        self.app.hook("name", name)
 
-    def start(self):
+    # Expose a property with settings. Maybe abstract? Return a default value if not overridden.
+    @property
+    def settings(self) -> PluginSettings:
+        return PluginSettings()
+
+    # Anything that's event: `on_{event_name}`
+    def on_startup(self) -> None:
         self.logger.info("MyPlugin started")
 
-    def stop(self):
+    def on_shutdown(self) -> None:
         self.logger.info("MyPlugin stopped")
 
     # Error handler hook. All the errors caused in app propagated here.
     # Figure out how to to pass all errors for the specific app here?
-    def on_error(self, error: PluginException):
+    def on_error(self, error: PluginException) -> None:
         self.logger.error(error)
 ```
 
@@ -40,7 +46,7 @@ And, then assuming there's the riemann app initialized, you can load a plugin as
 ```py
 from plugins import MyPlugin
 
-app.load_plugin(MyPlugin("name"), "hello-world")
+app.load_plugin("hello-world", MyPlugin("name"))
 ```
 
 You can enable and disable a plugin dynamically (comes with side-effects due to app-hooking):
